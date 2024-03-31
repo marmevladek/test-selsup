@@ -183,23 +183,23 @@ class DocumentService {
             long currentTime = System.currentTimeMillis();
             long interval = timeUnit.toMillis(1); // Convert time unit to milliseconds
             if (currentTime - lastRequestTime >= interval) {
-                // Если текущее время - время последнего запроса >= интервала, сбрасываем счетчик запросов
+
                 requestCounter = 0;
             }
             while (requestCounter >= requestLimit) {
-                // Если количество запросов превышено, блокируем вызов метода
+
                 try {
-                    lock.wait(); // Ожидаем разблокировки вызова метода
+                    lock.wait(); 
                 } catch (InterruptedException e) {
                     log.error("Thread interrupted while waiting: {}", e.getMessage());
                     Thread.currentThread().interrupt();
                 }
             }
-            // Иначе, обновляем время последнего запроса и увеличиваем счетчик
+
             lastRequestTime = currentTime;
             requestCounter++;
         }
-        // Теперь продолжаем создание документа как обычно
+
         Document document = Document.builder()
                 .doc_id(documentRequest.getDoc_id())
                 .doc_status(documentRequest.getDoc_status())
@@ -228,7 +228,7 @@ class DocumentService {
         log.info("Document {} is saved", document.getDoc_id());
 
         synchronized (lock) {
-            lock.notify(); // Разблокируем ожидающий вызов метода
+            lock.notify();
         }
     }
 
